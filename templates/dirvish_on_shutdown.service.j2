@@ -1,0 +1,17 @@
+[Unit]
+Description="create dirvish backups when shutting down or rebooting the system"
+ConditionFileIsExecutable=/usr/local/bin/dirvish_backup_on_boot_or_shutdown.sh
+Requires=basic.target
+After=basic.target
+Before=display-manager.service systemd-user-sessions.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/true
+ExecStop=/usr/local/bin/dirvish_backup_on_boot_or_shutdown.sh
+TimeoutSec=0
+StandardOutput=tty
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
