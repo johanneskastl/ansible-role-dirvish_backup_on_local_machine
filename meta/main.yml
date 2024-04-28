@@ -1,0 +1,21 @@
+galaxy_info:
+  role_name: 'dirvish_backup_on_local_machine'
+  namespace: 'johanneskastl'
+  author: 'Johannes Kastl'
+  description: 'Configure dirvish to create local backups on a machine'
+
+  license: 'BSD-3-Clause'
+
+  min_ansible_version: '2.12'
+
+  platforms:
+    - name: opensuse
+      versions:
+        - all
+    - name: SLES
+      versions:
+        - all
+
+  galaxy_tags: []
+
+dependencies: []
