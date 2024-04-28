@@ -34,7 +34,21 @@
     - path_to_default_conf: "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_root/dirvish/default.conf"
       path_to_include_in_backup: '/root/'
 
-- name: 'Create default.conf for home'
+- name: 'Create default.conf for home (without exclude)'
+  ansible.builtin.template:
+    src: 'default.conf.j2'
+    dest: "{{ item.path_to_default_conf }}"
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  loop:
+    - path_to_default_conf: "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_home/dirvish/default.conf"
+      path_to_include_in_backup: '/home'
+      naming_scheme: '%Y%m%d'
+  when:
+    - 'dirvish_home_exclude_paths is undefined'
+
+- name: 'Create default.conf for home (with exclude)'
   ansible.builtin.template:
     src: 'default.conf.j2'
     dest: "{{ item.path_to_default_conf }}"
@@ -46,6 +60,8 @@
       path_to_include_in_backup: '/home'
       naming_scheme: '%Y%m%d'
       exclude: "{{ dirvish_home_exclude_paths }}"
+  when:
+    - 'dirvish_home_exclude_paths is defined'
 
 - name: 'Create /etc/dirvish/master.conf'
   ansible.builtin.template:
