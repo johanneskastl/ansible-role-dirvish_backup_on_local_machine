@@ -1,0 +1,98 @@
+#!/bin/bash
+
+hostname="$HOSTNAME"
+echo "Hostname is set to ${hostname}"
+
+set +xeu
+
+###################################################
+# dirvish-expire for /boot
+#
+echo "Starting dirvish-expire for /boot"
+dirvish-expire --vault "${hostname}_boot" || {
+    echo "dirvish-expire for /boot went wrong, aborting..."
+    exit 5
+}
+echo "dirvish-expire for /boot finished successfully"
+
+###################################################
+# dirvish-expire for /etc
+#
+echo "Starting dirvish-expire for /etc"
+dirvish-expire --vault "${hostname}_etc" || {
+    echo "dirvish-expire for /etc went wrong, aborting..."
+    exit 5
+}
+echo "dirvish-expire for /etc finished successfully"
+
+###################################################
+# dirvish-expire for /root
+#
+echo "Starting dirvish-expire for /root"
+dirvish-expire --vault "${hostname}_root" || {
+    echo "dirvish-expire for /root went wrong, aborting..."
+    exit 5
+}
+echo "dirvish-expire for /root finished successfully"
+
+###################################################
+# dirvish-expire for /home
+#
+echo "Starting dirvish-expire for /home"
+dirvish-expire --vault "${hostname}_home" || {
+    echo "dirvish-expire for /home went wrong, aborting..."
+    exit 5
+}
+echo "dirvish-expire for /home finished successfully"
+
+echo "###################################################"
+echo "###################################################"
+echo "###################################################"
+
+###################################################
+# dirvish backup for /boot
+#
+echo "Starting dirvish backup for /boot"
+dirvish --vault "${hostname}_boot" || {
+    echo "dirvish backup for /boot went wrong, aborting..."
+    exit 5
+}
+echo "dirvish backup for /boot finished successfully"
+
+###################################################
+# dirvish backup for /etc
+#
+echo "Starting dirvish backup for /etc"
+dirvish --vault "${hostname}_etc" || {
+    echo "dirvish backup for /etc went wrong, aborting..."
+    exit 5
+}
+echo "dirvish backup for /etc finished successfully"
+
+###################################################
+# dirvish backup for /root
+#
+echo "Starting dirvish backup for /root"
+dirvish --vault "${hostname}_root" || {
+    echo "dirvish backup for /root went wrong, aborting..."
+    exit 5
+}
+echo "dirvish backup for /root finished successfully"
+
+###################################################
+# dirvish backup for /home
+#
+DIRVISH_BACKUP_DIRECTORY="{{ dirvish_bank_directory }}"
+if [ ! -d "${DIRVISH_BACKUP_DIRECTORY}${hostname}_home/$(date +"%Y%m%d")" ]
+then
+    echo "Starting dirvish backup for /home"
+    dirvish --vault "${hostname}_home" || {
+	echo "der dirvish backup for /home went wrong, aborting..."
+	exit 5
+    }
+    echo "dirvish backup for /home finished successfully"
+else
+    echo "dirvish backup directory with today's date already exists"
+fi
+
+exit 0
