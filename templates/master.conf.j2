@@ -1,0 +1,40 @@
+#
+# {{ ansible_managed }}
+#
+
+index: gzip
+log: gzip
+image-default: %Y%m%d-%H%M%S
+xdev: 1
+expire-default: +1 months
+Runall:
+bank:
+	{{ dirvish_bank_directory }}
+exclude:
+        .*.tmp
+        *~
+	/dev/
+	/proc/
+	/run/
+	/sys/
+	/tmp/
+	/var**/cache/
+	/var**/dev/
+	/var**/log
+	/var**/proc/
+	/var**/run/
+	/var**/sys/
+	/var**/tmp/
+
+	/media/
+	/mnt/
+
+	/bin/
+	/lib/
+	/lib64/
+	/sbin
+	/usr/
+
+	/.snapshots/
+
+	lost+found
