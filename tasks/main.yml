@@ -1,0 +1,89 @@
+---
+# dirvish_backup_on_local_machine/tasks/main.yml
+
+- name: 'Create dirvish vault directory and subdirectories'
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+  loop:
+    - "{{ dirvish_bank_directory }}/"
+    - "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_boot/"
+    - "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_boot/dirvish/"
+    - "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_etc/"
+    - "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_etc/dirvish/"
+    - "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_home/"
+    - "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_home/dirvish/"
+    - "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_root/"
+    - "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_root/dirvish/"
+
+- name: 'Create default.conf for boot, etc and root'
+  ansible.builtin.template:
+    src: 'default.conf.j2'
+    dest: "{{ item.path_to_default_conf }}"
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  loop:
+    - path_to_default_conf: "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_boot/dirvish/default.conf"
+      path_to_include_in_backup: '/boot/'
+    - path_to_default_conf: "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_etc/dirvish/default.conf"
+      path_to_include_in_backup: '/etc/'
+    - path_to_default_conf: "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_root/dirvish/default.conf"
+      path_to_include_in_backup: '/root/'
+
+- name: 'Create default.conf for home'
+  ansible.builtin.template:
+    src: 'default.conf.j2'
+    dest: "{{ item.path_to_default_conf }}"
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  loop:
+    - path_to_default_conf: "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_home/dirvish/default.conf"
+      path_to_include_in_backup: '/home'
+      naming_scheme: '%Y%m%d'
+      exclude: "{{ dirvish_home_exclude_paths }}"
+
+- name: 'Create /etc/dirvish/master.conf'
+  ansible.builtin.template:
+    src: 'master.conf.j2'
+    dest: '/etc/dirvish/master.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
+- name: 'Create systemd service file dirvish_on_boot.service'
+  ansible.builtin.template:
+    src: 'dirvish_on_boot.service.j2'
+    dest: '/etc/systemd/system/dirvish_on_boot.service'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
+- name: 'Create systemd service file dirvish_on_shutdown.service'
+  ansible.builtin.template:
+    src: 'dirvish_on_shutdown.service.j2'
+    dest: '/etc/systemd/system/dirvish_on_shutdown.service'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
+- name: 'Create dirvish script'
+  ansible.builtin.template:
+    src: 'dirvish_backup_on_boot_or_shutdown.sh.j2'
+    dest: '/usr/local/bin/dirvish_backup_on_boot_or_shutdown.sh'
+    owner: 'root'
+    group: 'root'
+    mode: '0744'
+
+- name: 'Enable the services'
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+    daemon_reload: true
+  loop:
+    - 'dirvish_on_boot.service'
+    - 'dirvish_on_shutdown.service'
