@@ -3,7 +3,9 @@ tree: {{ item.path_to_include_in_backup }}
 image-default: {{ item.naming_scheme | default('%Y%m%d-%H%M%S') }}
 {% if item.exclude is defined %}
 exclude:
-        {{ item.exclude | indent(width=8) }}
+{% for element in item.exclude %}
+        {{ element }}
+{% endfor %}
 {% endif %}
 expire-default: +2 weeks
 expire-rule:
