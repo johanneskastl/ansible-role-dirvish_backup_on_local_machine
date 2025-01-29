@@ -43,7 +43,7 @@
     mode: '0644'
   loop:
     - path_to_default_conf: "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_home/dirvish/default.conf"
-      path_to_include_in_backup: '/home'
+      path_to_include_in_backup: "{{ dirvish_path_to_home }}"
       naming_scheme: '%Y%m%d'
   when:
     - 'dirvish_home_exclude_paths is undefined'
@@ -57,7 +57,7 @@
     mode: '0644'
   loop:
     - path_to_default_conf: "{{ dirvish_bank_directory }}/{{ inventory_hostname }}_home/dirvish/default.conf"
-      path_to_include_in_backup: '/home'
+      path_to_include_in_backup: "{{ dirvish_path_to_home }}"
       naming_scheme: '%Y%m%d'
       exclude: "{{ dirvish_home_exclude_paths }}"
   when:
