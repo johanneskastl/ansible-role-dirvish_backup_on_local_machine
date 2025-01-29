@@ -1,4 +1,5 @@
 ---
 # dirvish_backup_on_local_machine/defaults/main.yml
 
+dirvish_path_to_home: '/home'
 dirvish_bank_directory: '/home/11_DIRVISH_BACKUPS'
