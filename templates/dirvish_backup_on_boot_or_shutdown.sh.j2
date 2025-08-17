@@ -83,7 +83,10 @@ echo "dirvish backup for /root finished successfully"
 # dirvish backup for /home
 #
 DIRVISH_BACKUP_DIRECTORY="{{ dirvish_bank_directory }}"
-if [ ! -d "${DIRVISH_BACKUP_DIRECTORY}${hostname}_home/$(date +"%Y%m%d")" ]
+# add a slash between DIRVISH_BACKUP_DIRECTORY and ${hostname}_home,
+# just in case the user does not add a trailing slash to the
+# dirvish_bank_directory variable
+if [ ! -d "${DIRVISH_BACKUP_DIRECTORY}/${hostname}_home/$(date +"%Y%m%d")" ]
 then
     echo "Starting dirvish backup for /home"
     dirvish --vault "${hostname}_home" || {
